@@ -10,12 +10,12 @@ import com.taydavid.tests.BaseTest;
 public class IntegrationTest extends BaseTest {
 
 	private HomePage homePage;
-	private PollResultsPage pageResultsPage;
+	private PollResultsPage pollResultsPage;
 
 	@BeforeMethod
 	public void beforeMethod() {
 		homePage = HomePage.getHomePage();
-		pageResultsPage = PollResultsPage.getPollResultsPage();
+		pollResultsPage = PollResultsPage.getPollResultsPage();
 	}
 
 	@Test
@@ -24,6 +24,6 @@ public class IntegrationTest extends BaseTest {
 				.printHowManyTimesEachArticleIconWasDisplayed().clickRandomPollOption().clickPollSubmitButton()
 				.getPollOptionName();
 
-		pageResultsPage.action().printPollVotedResults(selectedPollOption);
+		pollResultsPage.action().printPollVotedResults(selectedPollOption);
 	}
 }
