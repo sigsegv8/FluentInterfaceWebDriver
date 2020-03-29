@@ -1,0 +1,4 @@
+# Configuration parameters
+
+chromeDriverPath: C:/Users/tayda/chromedriver.exe
+homePageURL: http://slashdot.org
