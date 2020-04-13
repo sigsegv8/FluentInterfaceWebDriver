@@ -2,10 +2,13 @@ package com.taydavid.factory;
 
 import java.io.InputStream;
 
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.BrowserType;
 import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
@@ -59,11 +62,26 @@ public enum DriverFactory {
 		return mWebDriverWait;
 	}
 
+	public void jsDocumentStateReady() {
+		ExpectedCondition<Boolean> pageLoadCondition = new ExpectedCondition<Boolean>() {
+			public Boolean apply(WebDriver driver) {
+				return ((JavascriptExecutor) driver).executeScript("return document.readyState").equals("complete");
+			}
+		};
+		getWebDriverWait().until(pageLoadCondition);
+	}
+
 	public RemoteWebDriver getWebDriver() {
 		if (mWebDriver == null) {
 			throw new IllegalStateException("Need to call initWebDriver() first");
 		}
 		return mWebDriver;
+	}
+
+	public void quitWebDriver() {
+		mWebDriver.quit();
+		mWebDriver = null;
+		mWebDriverWait = null;
 	}
 
 	public Configuration getConfiguration() {
