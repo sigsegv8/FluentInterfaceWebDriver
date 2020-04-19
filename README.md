@@ -1,3 +1,3 @@
 # WebDriverDemo
 
-WebDriver demo with Page Object Model, Factory and Fluent Interface patterns.
+WebDriver demo I setup using vanilla Selenium demonstrating Page Object Model, Page Factory, Builder, Singleton and Fluent Interface design patterns.
