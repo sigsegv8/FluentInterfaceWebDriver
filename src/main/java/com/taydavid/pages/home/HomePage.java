@@ -1,7 +1,7 @@
 package com.taydavid.pages.home;
 
 /**
- * Home Page representation
+ * Home Page representations
  * 
  * @author tayda
  *
