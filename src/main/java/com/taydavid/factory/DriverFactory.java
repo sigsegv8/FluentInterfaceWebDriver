@@ -2,8 +2,6 @@ package com.taydavid.factory;
 
 import java.io.InputStream;
 
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.BrowserType;
@@ -24,17 +22,16 @@ import com.taydavid.config.Configuration;
 public enum DriverFactory {
 	INSTANCE;
 
-	private RemoteWebDriver mWebDriver;
+	private ThreadLocal<RemoteWebDriver> mWebDriver = new ThreadLocal<RemoteWebDriver>();
 	private Configuration mConfiguration;
-	private WebDriverWait mWebDriverWait;
 
 	/**
-	 * ChromeWebDriver version 80
+	 * ChromeWebDriver
 	 * 
 	 * @param browserName
 	 * @return
 	 */
-	public RemoteWebDriver initWebDriver(final String browserName) {
+	public void initWebDriver(final String browserName) {
 
 		if (browserName.equalsIgnoreCase(BrowserType.CHROME)) {
 			System.setProperty("webdriver.chrome.driver", this.getConfiguration().getChromeDriverPath());
@@ -47,41 +44,19 @@ public enum DriverFactory {
 			options.addArguments("--disable-dev-shm-usage");
 			options.addArguments("--disable-browser-side-navigation");
 			options.addArguments("--disable-gpu");
-			mWebDriver = new ChromeDriver(options);
+			mWebDriver.set(new ChromeDriver(options));
 		} else {
 			throw new UnsupportedOperationException(
 					"This test suite is not yet completed to handle this specified browser yet.");
 		}
-		return mWebDriver;
-	}
-
-	public WebDriverWait getWebDriverWait() {
-		if (mWebDriverWait == null) {
-			mWebDriverWait = new WebDriverWait(mWebDriver, 20);
-		}
-		return mWebDriverWait;
-	}
-
-	public void jsDocumentStateReady() {
-		ExpectedCondition<Boolean> pageLoadCondition = new ExpectedCondition<Boolean>() {
-			public Boolean apply(WebDriver driver) {
-				return ((JavascriptExecutor) driver).executeScript("return document.readyState").equals("complete");
-			}
-		};
-		getWebDriverWait().until(pageLoadCondition);
 	}
 
 	public RemoteWebDriver getWebDriver() {
-		if (mWebDriver == null) {
-			throw new IllegalStateException("Need to call initWebDriver() first");
-		}
-		return mWebDriver;
+		return mWebDriver.get();
 	}
 
 	public void quitWebDriver() {
-		mWebDriver.quit();
-		mWebDriver = null;
-		mWebDriverWait = null;
+		mWebDriver.get().quit();
 	}
 
 	public Configuration getConfiguration() {
@@ -91,5 +66,9 @@ public enum DriverFactory {
 			mConfiguration = yaml.load(inputStream);
 		}
 		return mConfiguration;
+	}
+
+	public void wait(final ExpectedCondition<?> condition) {
+		new WebDriverWait(this.getWebDriver(), 20).until(condition);
 	}
 }

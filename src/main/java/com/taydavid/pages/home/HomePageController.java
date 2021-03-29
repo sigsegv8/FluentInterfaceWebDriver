@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
@@ -40,7 +39,7 @@ public class HomePageController {
 	}
 
 	public HomePageController printHowManyTimesEachArticleIconWasDisplayed() {
-		Map<Object, Long> uniqueTopicCounts = topics.stream()
+		Map<Object, Long> uniqueTopicCounts = topics.parallelStream()
 				.collect(Collectors.groupingBy(icon -> icon.getAttribute("title"), Collectors.counting()));
 		System.out.println("Unique article icons along with count of occurrence(s)");
 		System.out.println(Arrays.toString(uniqueTopicCounts.entrySet().toArray()));
@@ -52,8 +51,6 @@ public class HomePageController {
 		Assert.assertTrue(pollOptions.size() > 0, "Poll Options size must be greater than 0");
 		int index = random.nextInt(pollOptions.size());
 		WebElement pollOption = pollOptions.get(index);
-		((JavascriptExecutor) DriverFactory.INSTANCE.getWebDriver()).executeScript("arguments[0].scrollIntoView(true);",
-				pollOption);
 
 		pollOptionName = pollOption.getText();
 		System.out.println("Poll option that was randomly selected: " + pollOptionName);
@@ -62,8 +59,6 @@ public class HomePageController {
 	}
 
 	public HomePageController clickPollSubmitButton() {
-		((JavascriptExecutor) DriverFactory.INSTANCE.getWebDriver()).executeScript("arguments[0].scrollIntoView(true);",
-				pollButton);
 		pollButton.click();
 		return this;
 	}
